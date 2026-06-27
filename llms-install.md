@@ -16,7 +16,13 @@ add a server entry pointing at the hosted URL. Do NOT try to npm-install or run 
    - **Transport / type:** `streamableHttp`
    - **Header:** `Authorization: Bearer <api_key>`
 
-   For Cline, the entry in `cline_mcp_settings.json` is:
+   **Cline CLI — one command (recommended, non-interactive):**
+   ```bash
+   cline mcp add invinoveritas https://api.babyblueviper.com/mcp \
+     --transport streamableHttp --header "Authorization: Bearer <api_key>" --yes
+   ```
+
+   **Cline (IDE) — or add the entry to `cline_mcp_settings.json`:**
    ```json
    {
      "mcpServers": {
