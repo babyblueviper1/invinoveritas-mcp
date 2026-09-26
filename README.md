@@ -8,9 +8,9 @@ irreversible action — shipping code, running a shell command, signing a transa
 The one thing an agent can't self-serve is a trustworthy verdict on its own output. This is that
 verdict — model-agnostic, advisory (it never blocks), and checkable from the bytes.
 
-- **Hosted, no install.** Remote Streamable-HTTP MCP server: `https://api.babyblueviper.com/mcp`
-- **Free key**, first calls free: `curl -X POST https://api.babyblueviper.com/register -d '{"label":"mcp"}'`
-- **`verify_proof` is always free / no auth.**
+- **Hosted, no install.** Remote Streamable-HTTP MCP server: `https://api.babyblueviper.com/mcp/verify`
+- **Sign-in:** standard MCP OAuth in clients that support it (a free account can be created on the consent screen), or a free API key as a Bearer header: `curl -X POST https://api.babyblueviper.com/register -d '{"label":"mcp"}'`
+- **`verify_proof` and `ledger` are always free / no auth.**
 
 ## Tools
 
@@ -20,16 +20,16 @@ verdict — model-agnostic, advisory (it never blocks), and checkable from the b
 | `verify_proof` | Recompute and verify a signed invinoveritas proof someone handed you — confirms it without trusting the presenter or us. | free |
 | `witness` | Anchor a third party's exact claim bytes, unmodified and unjudged — pure notarization (receipt + timestamp + integrity), distinct from `review` (our verdict). Source is self-declared and marked as such in the signed proof. | Bearer (paid) |
 
-(The server also exposes market/agent-data tools; `review` + `verify_proof` are the headline.)
+Also on this endpoint: `ledger` (free public verdict track record), `validate` (backtest reality-check), `audit_agent_readiness`, `ledger_submit`, `conformance_certify`. 8 tools in all; the server never moves money or assets for the user.
 
 ## Add it to your agent
 
-**Cursor** — one-click: [**Add invinoveritas to Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=invinoveritas&config=eyJ1cmwiOiJodHRwczovL2FwaS5iYWJ5Ymx1ZXZpcGVyLmNvbS9tY3AifQ==) (then add your `Authorization: Bearer` header), or edit `~/.cursor/mcp.json` (global) / `.cursor/mcp.json` (project):
+**Cursor** — one-click: [**Add invinoveritas to Cursor**](cursor://anysphere.cursor-deeplink/mcp/install?name=invinoveritas&config=eyJ1cmwiOiJodHRwczovL2FwaS5iYWJ5Ymx1ZXZpcGVyLmNvbS9tY3AvdmVyaWZ5In0=) (it signs in with OAuth on the first paid call), or edit `~/.cursor/mcp.json` (global) / `.cursor/mcp.json` (project):
 ```json
 {
   "mcpServers": {
     "invinoveritas": {
-      "url": "https://api.babyblueviper.com/mcp",
+      "url": "https://api.babyblueviper.com/mcp/verify",
       "headers": { "Authorization": "Bearer YOUR_API_KEY" }
     }
   }
@@ -42,29 +42,34 @@ verdict — model-agnostic, advisory (it never blocks), and checkable from the b
   "mcpServers": {
     "invinoveritas": {
       "type": "streamableHttp",
-      "url": "https://api.babyblueviper.com/mcp",
+      "url": "https://api.babyblueviper.com/mcp/verify",
       "headers": { "Authorization": "Bearer YOUR_API_KEY" }
     }
   }
 }
 ```
 
+**Gemini CLI** — install as an extension:
+```bash
+gemini extensions install https://github.com/babyblueviper1/invinoveritas-mcp
+```
+
 **Claude Code**:
 ```bash
-claude mcp add --transport http invinoveritas https://api.babyblueviper.com/mcp \
+claude mcp add --transport http invinoveritas https://api.babyblueviper.com/mcp/verify \
   --header "Authorization: Bearer YOUR_API_KEY"
 ```
 
 **Devin** — Settings → Connections → MCP servers → Add a custom MCP → HTTP (Streamable), URL
-`https://api.babyblueviper.com/mcp`, Auth Header `Authorization: Bearer YOUR_API_KEY`.
+`https://api.babyblueviper.com/mcp/verify`, Auth Header `Authorization: Bearer YOUR_API_KEY`.
 
 **OpenHands** — `config.toml`:
 ```toml
 [mcp]
-shttp_servers = [{ url = "https://api.babyblueviper.com/mcp", api_key = "YOUR_API_KEY", timeout = 60 }]
+shttp_servers = [{ url = "https://api.babyblueviper.com/mcp/verify", api_key = "YOUR_API_KEY", timeout = 60 }]
 ```
 
-**Any MCP client** — point it at `https://api.babyblueviper.com/mcp` (Streamable HTTP) with header
+**Any MCP client** — point it at `https://api.babyblueviper.com/mcp/verify` (Streamable HTTP) with header
 `Authorization: Bearer YOUR_API_KEY`. Protocol `2025-06-18`; the handshake, `tools/list`, and
 `tools/call` work out of the box.
 

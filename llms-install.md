@@ -12,13 +12,13 @@ add a server entry pointing at the hosted URL. Do NOT try to npm-install or run 
    The response contains `api_key`. Ask the user for their key, or have them register.
 
 2. Add this server to the host's MCP settings as a **Streamable HTTP (remote)** server:
-   - **URL:** `https://api.babyblueviper.com/mcp`
+   - **URL:** `https://api.babyblueviper.com/mcp/verify`
    - **Transport / type:** `streamableHttp`
    - **Header:** `Authorization: Bearer <api_key>`
 
    **Cline CLI — one command (recommended, non-interactive):**
    ```bash
-   cline mcp add invinoveritas https://api.babyblueviper.com/mcp \
+   cline mcp add invinoveritas https://api.babyblueviper.com/mcp/verify \
      --transport streamableHttp --header "Authorization: Bearer <api_key>" --yes
    ```
 
@@ -28,7 +28,7 @@ add a server entry pointing at the hosted URL. Do NOT try to npm-install or run 
      "mcpServers": {
        "invinoveritas": {
          "type": "streamableHttp",
-         "url": "https://api.babyblueviper.com/mcp",
+         "url": "https://api.babyblueviper.com/mcp/verify",
          "headers": { "Authorization": "Bearer <api_key>" }
        }
      }
@@ -40,7 +40,8 @@ add a server entry pointing at the hosted URL. Do NOT try to npm-install or run 
 
 ## Notes
 
-- `verify_proof` is free / no-auth. `review` is paid (sats / USDC / card); the first calls are free, and
-  it returns a `402` with funding instructions when a balance is needed — that is expected, not an error.
+- `verify_proof` and `ledger` are free / no-auth. `review` is paid; new accounts include a few free calls. With no balance
+  left, paid tools return a plain "not available with your current balance" message; that is expected, not an error.
+- Clients with MCP OAuth support can skip the header: they are prompted to sign in on the first paid call.
 - No environment variables, no local command, no Docker. If a setup flow asks for a command or args,
-  this server does not use them — it is URL + Authorization header only.
+  this server does not use them — it is a URL (plus an Authorization header, or OAuth sign-in).

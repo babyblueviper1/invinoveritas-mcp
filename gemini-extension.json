@@ -1,0 +1,10 @@
+{
+  "name": "invinoveritas",
+  "version": "1.14.0",
+  "description": "A neutral second opinion before an irreversible action, signed proofs, free proof verification and a public verdict ledger (remote MCP).",
+  "mcpServers": {
+    "invinoveritas": {
+      "httpUrl": "https://api.babyblueviper.com/mcp/verify"
+    }
+  }
+}
